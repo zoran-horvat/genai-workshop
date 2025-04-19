@@ -34,6 +34,11 @@ git checkout lesson-01-start
 
 Your Git repository will be in a detached HEAD state. You can either create a new branch to commit your changes, or stash them for later use.
 
-In this lesson, your task is to make changes to the UI.
+*This lesson* is teaching the fundamental principles of constructing prompts for the generative AI tools. The techniques you will learn include:
+- Defining the context, verifications, and the output format
+- Specifying the requests
+- Instructing the tool to prepare the plan of action
+
+*Your task* is to make changes to the UI.
 - Start from the existing `Index.cshtml`
 - Use an AI tool to ensure that the page, with all its elements, is rendered using a dark theme.
