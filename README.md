@@ -48,13 +48,11 @@ This will bring your Git repository into a detached HEAD state. If checking out 
 
 ## Lesson 01: Prompt Engineering Fundamentals
 
-To begin the lesson, checkout the tag `lesson-01-start`:
+To begin the lesson, checkout the branch `lesson-01-prompt-engineering-fundamentals`:
 
 ```
-git checkout lesson-01-start
+git switch lesson-01-prompt-engineering-fundamentals
 ```
-
-Your Git repository will be in a detached HEAD state. You can either create a new branch to commit your changes, or stash them for later use.
 
 *This lesson* is teaching the fundamental principles of constructing prompts for the generative AI tools. The techniques you will learn include:
 - Defining the context, verifications, and the output format
@@ -64,3 +62,21 @@ Your Git repository will be in a detached HEAD state. You can either create a ne
 *Your task* is to make changes to the UI.
 - Start from the existing `Index.cshtml`
 - Use an AI tool to ensure that the page, with all its elements, is rendered using a dark theme.
+
+## Lesson 02: Scaffolding with Gen AI
+
+To begin the lesson, checkout the branch `lesson-02-scaffolding`:
+
+```
+git switch lesson-02-scaffolding
+```
+
+*This lesson* is teaching the virtue of using AI to integrate Microsoft Identity library into the ASP.NET Core application. There are many sensitive steps to make in order to scaffold the use of Identity. These tasks can be performed effectively using AI tools, so to replace a human in implementing tedious and brittle steps.
+
+*The request* in this lesson is to implement authentication (login/logout features only), where users are managed in the local database.
+
+*Your task* is to make changes to the application:
+- Add necessary packages to the project, to support everything required by Microsoft Identity
+- Scaffold the database schema to support Identity
+- Make changes to the `_Layout.cshtml` to support login/logout features
+- Implement Login/Logout pages that utilize Identity to manage users
