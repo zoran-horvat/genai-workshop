@@ -1,0 +1,32 @@
+Request:
+- Add Microsoft Identity
+- Add Login/Logout button
+
+=====================
+
+(use codebase)
+Request:
+- Use Microsoft Identity for authentication
+- Use Razor pages
+- Only authenticate users stored in the local database
+- Use SQL Server
+- Use custom user class named ApplicationUser
+- Do not make any changes, only list what you plan to change
+
+Identify all changes necessary to implement the request.
+
+=====================
+
+(use codebase)
+Request:
+- Implement login/logout feature
+
+Observe the following constraints:
+- Login/Logout are razor pages
+- Use Microsoft Identity to login/logout
+- There is a Login/Logout button in the shared layout
+- The Login/Logout button is placed in the top-right corner within the navigation bar
+
+To implement the request:
+- Identify all files that require a change
+- Implement changes in all files
