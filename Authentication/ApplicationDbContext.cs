@@ -1,8 +1,7 @@
-namespace Web.Data;
-
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Web.Models;
+
+namespace Authentication;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
