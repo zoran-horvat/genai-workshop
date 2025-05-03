@@ -48,11 +48,15 @@ This will bring your Git repository into a detached HEAD state. If checking out 
 
 ## Lesson 01: Prompt Engineering Fundamentals
 
-To begin the lesson, checkout the branch `lesson-01-prompt-engineering-fundamentals`:
+This lesson is implemented on the branch `lesson-01-prompt-fundamentals`.
+
+*To begin* solving the lesson, switch to the tag `lesson-01-start`.
 
 ```
-git switch lesson-01-prompt-engineering-fundamentals
+git checkout lesson-01-start
 ```
+
+*Be aware* that this action will leave your repo in a detached HEAD state.
 
 *This lesson* is teaching the fundamental principles of constructing prompts for the generative AI tools. The techniques you will learn include:
 - Defining the context, verifications, and the output format
@@ -65,13 +69,17 @@ git switch lesson-01-prompt-engineering-fundamentals
 
 ## Lesson 02: Scaffolding with Gen AI
 
-To begin the lesson, checkout the branch `lesson-02-scaffolding`:
+This lesson is implemented on the branch `lesson-02-scaffolding`.
+
+*To begin* solving the lesson, switch to the tag `lesson-02-start`.
 
 ```
-git switch lesson-02-scaffolding
+git checkout lesson-02-start
 ```
 
-*This lesson* is teaching the virtue of using AI to integrate Microsoft Identity library into the ASP.NET Core application. There are many sensitive steps to make in order to scaffold the use of Identity. These tasks can be performed effectively using AI tools, so to replace a human in implementing tedious and brittle steps.
+*Be aware* that this action will leave your repo in a detached HEAD state.
+
+*This lesson* is teaching the virtue of using AI to integrate [Microsoft Identity library](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity) into the ASP.NET Core application. There are many sensitive steps to make in order to scaffold the use of Identity. These tasks can be performed effectively using AI tools, so to replace a human in implementing tedious and brittle steps.
 
 *The request* in this lesson is to implement authentication (login/logout features only), where users are managed in the local database.
 
