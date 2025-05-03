@@ -88,3 +88,41 @@ git checkout lesson-02-start
 - Scaffold the database schema to support Identity
 - Make changes to the `_Layout.cshtml` to support login/logout features
 - Implement Login/Logout pages that utilize Identity to manage users
+
+## Lesson 03: Exploring a Library
+
+This lesson is implemented on the branch `lesson-03-exploring-library`.
+
+*To begin* solving the lesson, switch to the tag `lesson-03-start`.
+
+```
+git checkout lesson-03-start
+```
+
+*Be aware* that this action will leave your repo in a detached HEAD state.
+
+*This lesson* is teaching the virtue of using AI to experiment with a library you are not comfortable with. We shall integrate the application with [Spectre.Console](https://spectreconsole.net).
+
+This library brings many specifics we must master, including:
+- Registering commands,
+- Dependency injection,
+- Formatting output, etc.
+
+AI tools are a viable solution to getting acquainted with an unknown library code and still write sound, correct, and maintainable code.
+
+*The request* in this lesson is to implement a side console application intended for use during the development of the main website.
+
+*At the beginning* of the lesson, observe that the authentication has been moved into a separate project, namded `Authentication`. That simplifies the `Web` project, but complicates recreating the database - a frequent operation in development. Dropping and creating the database afresh requires these complicated steps:
+
+```
+cd ./Web
+dotnet ef database drop --project ../Authentication --context ApplicationDbContext
+dotnet ef database update --project ../Authentication --context ApplicationDbContext
+```
+
+*Your task* is to develop a simple development tool that automates this task.
+
+Implement these features in the console application:
+- Add neccessary packages to use `Spectre.Console` in the project
+- Scaffold the command, including dependency injection
+- Implement a command which resets the database by dropping and updating it again
