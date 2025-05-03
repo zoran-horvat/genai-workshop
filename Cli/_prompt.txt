@@ -1,0 +1,55 @@
+Request: Integrate Spectre.Console into this application.
+
+In this step:
+- Add necessary references to the project.
+- Make no other changes.
+
+========================
+
+Request: There will be a comamnd named 'resetdb', such as in this usage:
+dotnet run resetdb
+
+In this step:
+- Define the ResetDatabase command
+- Make ResetDatabase a proper command in Spectre
+- Call this command when 'resetdb' is used on the command line
+
+Observe these constraints:
+- Use top-level statements in Program.cs
+- Do not use word 'Command' in commands
+- Place the command in the Commands namespace (and directory)
+
+========================
+
+dotnet add package Spectre.Console.Cli
+
+========================
+
+dotnet run
+
+========================
+
+Plan a feature:
+- Drop the database
+- Use ApplicationDbContext from Authentication project to drop the database
+- Implement a separate method that does that
+
+Make changes to all files necessary
+#codebase
+
+========================
+
+Implement dependency injection on commands, to implement these requirements:
+- Inject ApplicationDbContext into ResetDatabase command
+- Implement dependency injection for commands in Spectre.Console
+- Register ApplicationDbContext as a service
+- Modify all files neccessary
+#codebase
+
+========================
+
+Implement recreating the database:
+- Create a new method
+- Use the ApplicationDbContext to update the database
+- Modify all files necessary
+#codebase
