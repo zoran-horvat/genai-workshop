@@ -3,6 +3,7 @@ Request: Integrate Spectre.Console into this application.
 In this step:
 - Add necessary references to the project.
 - Make no other changes.
+#codebase
 
 ========================
 
