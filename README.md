@@ -131,7 +131,7 @@ Implement these features in the console application:
 
 This lesson is implemented on the branch `lesson-04-feature-planning`.
 
-*To begin* solvingn the lesson, switch to the tag `lesson-04-feature-planning`.
+*To begin* solvingn the lesson, switch to the tag `lesson-04-start`.
 
 ```
 git checkout lesson-04-feature-planning
