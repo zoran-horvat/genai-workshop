@@ -16,5 +16,20 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         base.OnModelCreating(builder);
 
         builder.HasDefaultSchema("auth");
+
+        builder.Entity<IdentityRole>().HasData(
+            new IdentityRole
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "Owner",
+                NormalizedName = "OWNER"
+            },
+            new IdentityRole
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "User",
+                NormalizedName = "USER"
+            }
+        );
     }
 }

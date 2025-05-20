@@ -1,56 +1,201 @@
-Request: Integrate Spectre.Console into this application.
+Plan the implementation of the new feature:
+- There must exist test users in the database
+- Test users do not have to comply with common password policy
+- Test users are activated, with their email addresses confirmed
+- The 'resetdb' command creates test users
 
-In this step:
-- Add necessary references to the project.
-- Make no other changes.
+These users must exist (username/password role):
+- owner/owner Owner
+- user1/user1 User
+- user2/user2 User
+- user3/user3 User
+
+Observe these instructions:
+- Do not modify any files
+- Make a step-by-step iterative plan of implementation
+- For every step list prerequisites to implementing it (e.g. roles Owner and User exist before creating any users)
+
 #codebase
 
-========================
+The following blocks will define the implementation plan.
+Individual steps are separated by a line consisting of dashes.
 
-Request: There will be a comamnd named 'resetdb', such as in this usage:
-dotnet run resetdb
+---------------------------
 
-In this step:
-- Define the ResetDatabase command
-- Make ResetDatabase a proper command in Spectre
-- Call this command when 'resetdb' is used on the command line
+Step 1: Add Roles to the Database
 
-Observe these constraints:
-- Use top-level statements in Program.cs
-- Do not use word 'Command' in commands
-- Place the command in the Commands namespace (and directory)
+Objective: Ensure the roles Owner and User exist in the database.
 
-========================
+Prerequisites:
+The ResetDatabase command is functional and can update the database using ApplicationDbContext.
 
-dotnet add package Spectre.Console.Cli
+Implementation:
+Use Identity object model to add roles
+Create a migration using dotnet CLI
 
-========================
+Outcome:
+The roles Owner and User are present in the database after running the resetdb command.
 
-dotnet run
+---------------------------
 
-========================
+Step 2: Add Test Users to the Database
 
-Plan a feature:
-- Drop the database
-- Use ApplicationDbContext from Authentication project to drop the database
-- Implement a separate method that does that
+Objective: Create the specified test users (owner, user1, user2, user3) with their respective roles.
 
-Make changes to all files necessary
+Prerequisites:
+Roles Owner and User exist in the database.
+The UserManager service is available for creating users.
+
+Implementation:
+Extend the ResetDatabase class to include logic for creating test users after adding roles.
+Use the UserManager service to create users programmatically.
+Assign the Owner role to the owner user and the User role to the other users.
+Ensure users are created only if they do not already exist.
+
+Outcome:
+The test users (owner, user1, user2, user3) are created with their respective roles.
+
+---------------------------
+
+Step 3: Bypass Password Policy for Test Users
+
+Objective: Ensure test users do not need to comply with the default password policy.
+
+Prerequisites:
+The UserManager service is functional and can create users.
+
+Implementation:
+Configure the PasswordOptions in the Identity setup to allow weak passwords temporarily during the creation of test users.
+Revert the password policy to its default state after creating the test users.
+Only the Cli project observes weak password policies.
+
+Outcome:
+Test users are created with the specified passwords (owner, user1, etc.) without triggering password policy violations.
+
+---------------------------
+
+Step 4: Activate Test Users and Confirm Email
+
+Objective: Ensure test users are activated and their email addresses are marked as confirmed.
+
+Prerequisites:
+Test users are successfully created in the database.
+
+Implementation:
+Use the UserManager service to set the EmailConfirmed property of each test user to true.
+Ensure this step is executed after the users are created.
+
+Outcome:
+Test users are activated, and their email addresses are confirmed.
+
+---------------------------
+
+Step 5: Integrate All Steps into the ResetDatabase Command
+
+Objective: Ensure the resetdb command performs all the above steps in sequence.
+
+Prerequisites:
+All individual steps (roles, users, password policy, email confirmation) are implemented and tested.
+
+Implementation:
+Update the ResetDatabase class to call methods for adding roles, creating users, bypassing password policy, and confirming emails.
+Ensure proper logging for each step to provide feedback during execution.
+
+Outcome:
+Running the resetdb command resets the database and sets up the test users with the specified roles and properties.
+
+================================
+NEW PROMPT FOR STEP 1
+================================
+
+Objective: Ensure the roles Owner and User exist in the database.
+
 #codebase
 
-========================
+To implement this requirement:
+- Modify the Authentication project to add Owner and User roles to the database
+- Use Identity object model to add roles
+- Create a migration using dotnet CLI
 
-Implement dependency injection on commands, to implement these requirements:
-- Inject ApplicationDbContext into ResetDatabase command
-- Implement dependency injection for commands in Spectre.Console
-- Register ApplicationDbContext as a service
-- Modify all files neccessary
+Before outputting the changes, verify that after the change:
+The roles Owner and User will be present in the database after running the resetdb command in Cli project.
+
+These are the instructions what to output:
+- Only show code changes
+- Prepare terminal instructions to execute
+
+Do not output any explanations.
+
+================================
+NEW PROMPT FOR STEP 2
+================================
+
+Objective: Create test users: owner, user1, user2, user3 with their respective roles.
+
 #codebase
 
-========================
+To implement this requirement:
+- Assume roles Owner and User exist in the database
+- Extend the ResetDatabase class to include logic for creating test users
+- Create users programmatically.
+- Assign the Owner role to the owner user and the User role to the other users.
+- Ensure users are created only if they do not already exist.
 
-Implement recreating the database:
-- Create a new method
-- Use the ApplicationDbContext to update the database
-- Modify all files necessary
+Before outputting the changes, verify that after the change:
+The test users (owner, user1, user2, user3) are created with their respective roles.
+
+These are the instructions what to output:
+- Only show code changes
+- Prepare terminal instructions to execute
+
+Do not output any explanations.
+
+================================
+NEW PROMPT FOR STEP 3
+================================
+
+Objective: Ensure test users do not need to comply with the default password policy.
+
 #codebase
+
+To implement this requirement:
+- Temporarily allow weak passwords during the creation of test users.
+- Revert the password policy to its default state after creating the test users.
+- Modify creation of test users (owner, user1, user2, user3) to use the same password as the username.
+- Only the Cli project observes weak password policies.
+
+Before outputting the changes, verify that after the change:
+Test users are created with the specified passwords (username/password: owner/owner, user1/user1, user2/user2, user3/user3)
+
+These are the instructions what to output:
+- Only show code changes
+- Prepare terminal instructions to execute
+
+Do not output any explanations.
+
+================================
+NEW PROMPT FOR STEP 4
+================================
+
+Objective: Ensure test users are activated and their email addresses are marked as confirmed.
+
+#codebase
+
+To implement this requirement:
+- Ensure that the email is confirmed for each test user to true.
+- Ensure that each test user is active
+
+Before outputting the changes, verify that after the change:
+Test users are activated, and their email addresses are confirmed.
+
+These are the instructions what to output:
+- Only show code changes
+- Prepare terminal instructions to execute
+
+Do not output any explanations.
+
+================================
+NEW PROMPT FOR STEP 5
+================================
+
+Objective: Ensure the resetdb command performs all the above steps in sequence.

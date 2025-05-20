@@ -18,6 +18,8 @@ services.AddDbContext<ApplicationDbContext>(options =>
 
 // Register ResetDatabase command
 services.AddTransient<ResetDatabase>();
+// Register ListUsers command
+services.AddTransient<ListUsers>();
 
 // Build the service provider
 var serviceProvider = services.BuildServiceProvider();
@@ -30,6 +32,7 @@ var app = new CommandApp(registrar);
 app.Configure(config =>
 {
     config.AddCommand<ResetDatabase>("resetdb");
+    config.AddCommand<ListUsers>("list-users");
 });
 
 app.Run(args);
