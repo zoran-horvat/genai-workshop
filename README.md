@@ -126,3 +126,35 @@ Implement these features in the console application:
 - Add neccessary packages to use `Spectre.Console` in the project
 - Scaffold the command, including dependency injection
 - Implement a command which resets the database by dropping and updating it again
+
+## Lesson 04: Developing a Feature Plan
+
+This lesson is implemented on the branch `lesson-04-feature-planning`.
+
+*To begin* solvingn the lesson, switch to the tag `lesson-04-feature-planning`.
+
+```
+git checkout lesson-04-feature-planning
+```
+
+*Be aware* that this action will leave your repo in a detached HEAD state.
+
+*This lesson* is teaching how you can utilize an AI tool to develop a step-by-step plan for a new feature before implementing each of the steps.
+
+*The request* is to add a feature to both the main Web application, and to the accompanying CLI tool, to create sample users that can be used in the development.
+
+*Your task* is to add these features:
+- Ensure that roles `Owner` and `User` exist in the Identity schema (update the `Authentication` project).
+- Ensure that the `resetdb` command in the CLI tool creates these test users (username/password): owner/owner, user1/user1, user2/user2, user3/user3.
+
+Please keep in mind that the passwords of these users do not satisfy the common password validation rules. These users should be a subject to relaxed validation rules on creation.
+
+*To verify* that the task is complete, use the CLI tool:
+
+```
+# Run in the Cli directory
+dotnet run -- resetdb
+```
+
+After executing the command, ensure that the `auth` database schema contains the roles (`Owner`, `User`) and users (`owner`, `user1`, `user2`, `user3`).
+
