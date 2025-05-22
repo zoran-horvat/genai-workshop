@@ -16,6 +16,10 @@ var services = new ServiceCollection();
 services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+// Register MigrationManager as a service
+services.AddTransient(provider =>
+    new Web.Data.MigrationManager(configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string not found.")));
+
 // Register ResetDatabase command
 services.AddTransient<ResetDatabase>();
 // Register ListUsers command

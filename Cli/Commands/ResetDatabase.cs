@@ -3,16 +3,19 @@ using System.Diagnostics.CodeAnalysis;
 using Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Web.Data;
 
 namespace Commands;
 
 public class ResetDatabase : Command<ResetDatabase.Settings>
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly MigrationManager _migrationManager;
 
-    public ResetDatabase(ApplicationDbContext dbContext)
+    public ResetDatabase(ApplicationDbContext dbContext, MigrationManager migrationManager)
     {
         _dbContext = dbContext;
+        _migrationManager = migrationManager;
     }
 
     public sealed class Settings : CommandSettings
@@ -24,6 +27,7 @@ public class ResetDatabase : Command<ResetDatabase.Settings>
         Console.WriteLine("Resetting the database...");
         DropDatabase();
         RecreateDatabase();
+        _migrationManager.ApplyMigrations();
         CreateTestUsersAndRoles();
         return 0;
     }
