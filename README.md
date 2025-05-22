@@ -158,3 +158,25 @@ dotnet run -- resetdb
 
 After executing the command, ensure that the `auth` database schema contains the roles (`Owner`, `User`) and users (`owner`, `user1`, `user2`, `user3`).
 
+
+## Lesson 05: Modeling the Domain
+
+This lesson is implemented on the branch `lesson-05-domain-modeling`.
+
+*To begin* solvingn the lesson, switch to the tag `lesson-05-start`.
+
+```
+git checkout lesson-05-domain-modeling
+```
+
+*Be aware* that this action will leave your repo in a detached HEAD state.
+
+*This lesson* is teaching how you can utilize an AI tool to develop an object-oriented domain model, and the corresponding database schema.
+
+*The request* is to define companies owned by the registered user. A company has a name, TIN, and an address.
+
+*Your task* is to add these features:
+- Define classes `Company` and `Address`
+- Implement the database migration script that creates a database schema named `business`, with tables `Companies` and `Addresses`
+- Expose a page to list the companies owned by the logged-in user
+- Expose a page to add a new company owned by the logged-in user.
