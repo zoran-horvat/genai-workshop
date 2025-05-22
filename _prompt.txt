@@ -1,0 +1,97 @@
+Request:
+- Define a model for a company with the primary address
+- Address has fields: StreetAddress, City, State, PostalCode, Country
+- Company has fields: Name, TIN, Address
+- Define the database tables for these models
+- Prepare the database migration script for these models
+- Add Web pages that perform CRUD operations with companies
+- These pages define companies owned by the currently logged-in user
+
+===================================
+NEW CHAT
+===================================
+
+This is the request:
+- Initialize a domain model for Address
+- Define fields: StreetAddress, City, State, PostalCode, Country
+- Define it in the Models namespace in the Web project
+- This model will be a database entity
+
+#codebase
+
+-----------------------------------
+
+Make improvements to the Address model:
+- Remove annotations
+- Use file-scoped namespace
+- Use an immutable record
+
+-----------------------------------
+
+This is the request:
+- Define a domain model for Company
+- Define fields: Name, TIN, Address
+- Define it in the Models namespace in the Web project
+- This model will be a database entity
+- Remove annotations
+- Use file-scoped namespace
+- Use an immutable record
+
+-----------------------------------
+
+Request: Implement the database migration for Company and Address models
+
+Observe these constraints:
+- Use T-SQL for the database code
+- Define the migration in the Migrations directory in the Web project
+- Name the file migration-001.sql
+
+-----------------------------------
+
+Make these adjustments:
+- Make Address depend on Company, not vice versa
+- Create tables only if not exist
+
+-----------------------------------
+
+Make this adjustment:
+- Tie a company to a user from the Identity schema
+- Do not create cross-schema foreign keys
+
+-----------------------------------
+
+Make these adjustments:
+- Make both table names in plural (Companies and Addresses)
+- Create a database schema "business" if it doesn't exist
+- Create Companies and Addresses tables in the business schema
+
+===================================
+NEW CHAT
+===================================
+
+This is the request:
+- Design a page to view the companies of a logged-in user
+
+To implement this request:
+- Create a new page Companies
+- Only the user in the role User can access the page
+- Add the "My Companies" menu item that leads to the Companies page
+- Only the user in the role User can see the "My Companies" menu item
+
+-----------------------------------
+
+When logged-in as a user in role User, there is no "My Companies" menu item visible.
+Find the issue and fix it.
+#codebase
+
+-----------------------------------
+
+This is the request:
+- There must be a form in the UI to create a new company for the logged-in user
+
+To implement this request:
+- Create a new page NewCompany
+- Add a button on the Companies page that leads to the NewCompany page
+- The NewCompany page is only accessible to users in role User
+- The NewCompany page contains a form for the company data
+- The form includes all fields from Company and Address models
