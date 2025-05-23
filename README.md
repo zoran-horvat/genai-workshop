@@ -134,7 +134,7 @@ This lesson is implemented on the branch `lesson-04-feature-planning`.
 *To begin* solvingn the lesson, switch to the tag `lesson-04-start`.
 
 ```
-git checkout lesson-04-feature-planning
+git checkout lesson-04-start
 ```
 
 *Be aware* that this action will leave your repo in a detached HEAD state.
@@ -158,15 +158,14 @@ dotnet run -- resetdb
 
 After executing the command, ensure that the `auth` database schema contains the roles (`Owner`, `User`) and users (`owner`, `user1`, `user2`, `user3`).
 
-
 ## Lesson 05: Modeling the Domain
 
 This lesson is implemented on the branch `lesson-05-domain-modeling`.
 
-*To begin* solvingn the lesson, switch to the tag `lesson-05-start`.
+*To begin* solving the lesson, switch to the tag `lesson-05-start`.
 
 ```
-git checkout lesson-05-domain-modeling
+git checkout lesson-05-start
 ```
 
 *Be aware* that this action will leave your repo in a detached HEAD state.
@@ -180,3 +179,31 @@ git checkout lesson-05-domain-modeling
 - Implement the database migration script that creates a database schema named `business`, with tables `Companies` and `Addresses`
 - Expose a page to list the companies owned by the logged-in user
 - Expose a page to add a new company owned by the logged-in user.
+
+## Lesson 06: Implementing the Persistence Patterns
+
+This lesson is implemented on the branch `lesson-06-persistence-patterns`.
+
+*To begin* solving the lesson, switch to the tag `lesson-06-start`.
+
+```
+git checkout lesson-06-start
+```
+
+*Be aware* that this action will leave your repo in a detached HEAD state.
+
+*This lesson* is teaching how you can utilize an AI tool to implement some of the most common persistence patterns in a database application: Repository, Unit or Work, and Query.
+
+*The request* is to complete the CRUD operations on companies owned by the currently logged-in user. Great stress is on security: Every action must be secure, in the sense that it only operates on the data owned by the logged-in user.
+
+*Your task* is to add these features:
+- Define interfaces IRepository<TModel>, IUnitOfWork, and IQuery<TViewModel>
+- Implement concrete classes that use Dapper: UnitOfWork, CompaniesRepository, and CompaniesQuery
+- Make sure that all queries and SQL statements incorporate the identity of the currently logged-in user
+- Complete the NewCompany and Companies Razor pages, which create and list the companies owned by the logged-in user
+- Add a page to edit a company, as well as an action to delete a company
+- Implement soft deleting, i.e. a Deleted flag in the Companies table
+
+*To verify* that the task is complete:
+- The CLI tool creates all the tables with the right fields in the database
+- The application user can create, view, update, and delete a company
