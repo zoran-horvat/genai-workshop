@@ -1,0 +1,57 @@
+@page "{id:int}"
+@model Web.Pages.EditCompanyModel
+@{
+    ViewData["Title"] = "Edit Company";
+}
+
+<h2>Edit Company</h2>
+
+@if (Model.ErrorMessage != null)
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+<form method="post">
+    <input type="hidden" asp-for="Company.Id" />
+    <div class="mb-3">
+        <label asp-for="Company.Name" class="form-label"></label>
+        <input asp-for="Company.Name" class="form-control" />
+        <span asp-validation-for="Company.Name" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Company.TIN" class="form-label"></label>
+        <input asp-for="Company.TIN" class="form-control" />
+        <span asp-validation-for="Company.TIN" class="text-danger"></span>
+    </div>
+    <fieldset>
+        <legend>Address</legend>
+        <input type="hidden" asp-for="Company.Address.Id" />
+        <div class="mb-3">
+            <label asp-for="Company.Address.StreetAddress" class="form-label"></label>
+            <input asp-for="Company.Address.StreetAddress" class="form-control" />
+            <span asp-validation-for="Company.Address.StreetAddress" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Company.Address.City" class="form-label"></label>
+            <input asp-for="Company.Address.City" class="form-control" />
+            <span asp-validation-for="Company.Address.City" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Company.Address.State" class="form-label"></label>
+            <input asp-for="Company.Address.State" class="form-control" />
+            <span asp-validation-for="Company.Address.State" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Company.Address.PostalCode" class="form-label"></label>
+            <input asp-for="Company.Address.PostalCode" class="form-control" />
+            <span asp-validation-for="Company.Address.PostalCode" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Company.Address.Country" class="form-label"></label>
+            <input asp-for="Company.Address.Country" class="form-control" />
+            <span asp-validation-for="Company.Address.Country" class="text-danger"></span>
+        </div>
+    </fieldset>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-page="/Companies" class="btn btn-secondary">Cancel</a>
+</form>

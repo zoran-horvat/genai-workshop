@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
+using Web.Models;
+using Web.Data.Abstractions;
+using Web.Data;
 
 namespace Web.Pages;
 
@@ -36,13 +39,26 @@ public class NewCompanyModel : PageModel
     [Required]
     public string Country { get; set; } = string.Empty;
 
+    private readonly IUnitOfWork _unitOfWork;
+
+    public NewCompanyModel(IUnitOfWork unitOfWork)
+    {
+        _unitOfWork = unitOfWork;
+    }
+
     public void OnGet() { }
 
-    public IActionResult OnPost()
+    public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
             return Page();
-        // TODO: Save the new company for the logged-in user
+
+        var address = Address.CreateNew(StreetAddress, City, State, PostalCode, Country );
+        var company = Company.CreateNew(CompanyName, TIN, address);
+
+        await _unitOfWork.Companies.AddAsync(company);
+        await _unitOfWork.CommitAsync();
+
         return RedirectToPage("/Companies");
     }
 }
