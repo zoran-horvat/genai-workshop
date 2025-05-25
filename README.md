@@ -207,3 +207,48 @@ git checkout lesson-06-start
 *To verify* that the task is complete:
 - The CLI tool creates all the tables with the right fields in the database
 - The application user can create, view, update, and delete a company
+
+
+## Lesson 07: Test-Driven AI
+
+This lesson is implemented on the branch `lesson-07-test-driven-ai`.
+
+*To begin* solving the lesson, switch to the tag `lesson-07-start`.
+
+```
+git checkout lesson-07-start
+```
+
+*Be aware* that this action will leave your repo in a detached HEAD state.
+
+*This lesson* is teaching how you can drive the decisions of an AI tool by specifying the unit tests its implementation must satisfy. The process will closely resemble TDD.
+
+*The request* is to implement the model for money before implementing financial requirements in the application. Use the AI tool to generate unit tests from the specification, and then (in the style of TDD), to implement the model classes so that all the unit tests pass.
+
+*The money definition* consists of three types:
+- Currency - adheres to the ISO 4217 specification of currencies, so-called ISO-3 currency symbols (e.g. USD, EUR, HUF).
+- Money - represents a non-negative money amount in a given currency and with a specific precision
+- MoneyBag - represents a set of Moneys in different currencies (useful in accounting)
+
+*The `Currency` type* should satisfy these requirements:
+- Always contains a currency symbol aligned with ISO 4217
+- Exposes the currency symbol
+- It is an immutable type
+
+*The `Money` type* should satisfy these requirements:
+- Exposes `Currency`, precision (2, 4, or 6), and the decimal amount (non-negative)
+- The amount never has more decimals than the precision
+- Adding two `Money`s with the same currency (strict addition) creates another money with the sum of the amounts and the precision being the higher of the two
+- Adding two general `Money`s (relaxed addition) creates a `MoneyBag`
+- Scaling a `Money` by a decimal factor creates a new `Money` with the scaled amount and the same precision
+- It is possible to subtract another `Money` if it has the same `Currency` and its amount is not greater than that of the current `Money`
+
+*The `MoneyBag` type* should satisfy these requirements:
+- Exposes a sequence of `Money`s
+- It always contains at least one `Money`
+- There is only one instance of `Money` per `Currency`
+- Adding new `Money` with the unique `Currency` adds that instance to the sequence
+- Adding new `Money` with the existing `Currency` retains the sum of two instances, observing the strict summation rules for `Money`
+- Folding the `MoneyBag` into a `Money` instance is only possible if it contains a single `Currency`
+
+*To verify* that the task is complete, there should be dozens of unit tests for the money-related classes, all green.
