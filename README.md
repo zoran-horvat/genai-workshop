@@ -208,7 +208,6 @@ git checkout lesson-06-start
 - The CLI tool creates all the tables with the right fields in the database
 - The application user can create, view, update, and delete a company
 
-
 ## Lesson 07: Test-Driven AI
 
 This lesson is implemented on the branch `lesson-07-test-driven-ai`.
@@ -252,3 +251,23 @@ git checkout lesson-07-start
 - Folding the `MoneyBag` into a `Money` instance is only possible if it contains a single `Currency`
 
 *To verify* that the task is complete, there should be dozens of unit tests for the money-related classes, all green.
+
+## Lesson 08: Upgrading the Database Schema
+
+This lesson is implemented on the branch `lesson-08-upgrading-schema`.
+
+*To begin* solving the lesson, switch to the tag `lesson-08-start`.
+
+```
+git checkout lesson-08-start
+```
+
+*Be aware* that this action will leave your repo in a detached HEAD state.
+
+*This lesson* is teaching how to augment the AI tool to develop the database schema and the domain models in lockstep.
+
+*The request* is to separate the autoincrement IDs used by the database from external systems and Web pages. All externally visible objects should carry a GUID identifier, while the database-related code (UoW, repositories) should operate on autoincrement IDs for the database operations.
+
+*A specific* request is to use GUID external IDs in the `Company` and `Address` domain models.
+
+*To verify* that the task is complete, ensure that no autoincrement ID is visible in any of the Web pages operating on companies.
