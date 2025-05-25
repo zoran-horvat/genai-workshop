@@ -87,6 +87,54 @@ git fetch upstream
 
 You can then merge or rebase changes from the original repository as needed.
 
+## Running the Demo Application
+
+Follow these steps to run the demo application:
+
+### 1. Set the Connection String
+
+Both the **Web** and **Cli** projects require a connection string to connect to the database.
+
+- Open the `appsettings.Development.json` file in both the `Web` and `Cli` project directories.
+- Find the `ConnectionStrings` section.
+- Set the connection string to match your environment. For example, for a SQL Server LocalDb instance:
+
+  ```json
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=auth;Trusted_Connection=True;MultipleActiveResultSets=true"
+  }
+  ```
+
+> **Note:** Make sure both projects use the same connection string.
+
+### 2. Initialize the Database
+
+Before running the web application, you need to set up the database schema and create test users.
+
+- Open a terminal and navigate to the `Cli` project directory.
+- Run the following command to reset and initialize the database:
+
+  ```
+  dotnet run -- resetdb
+  ```
+
+This will drop and recreate the database, set up the schema, and create test users (`owner/owner`, `user1/user1`, etc.).
+
+### 3. Run the Web Application
+
+- Open a new terminal and navigate to the `Web` project directory.
+- Start the web application:
+
+  ```
+  dotnet run
+  ```
+
+- Open your browser and go to the URL shown in the terminal output (usually `https://localhost:5001` or similar).
+
+- Log in using the test user credentials user1/user1.
+
+You can now explore the application's features.
+
 ## Working With Lesson Branches
 
 Each lesson in the workshop has dedicated branches. You can list all the lessons using the command:
