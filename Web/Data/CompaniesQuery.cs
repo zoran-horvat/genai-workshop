@@ -13,7 +13,7 @@ public class CompaniesQuery(SqlConnection connection, UserId userId) : IQuery<Co
 
     public async Task<IEnumerable<CompanyViewModel>> GetAllAsync()
     {
-        var sql = @"SELECT c.Id AS CompanyId, c.Name, c.TIN, a.Id AS AddressId, a.StreetAddress, a.City, a.State, a.PostalCode, a.Country
+        var sql = @"SELECT c.ExternalId AS CompanyId, c.Name, c.TIN, a.Id AS AddressId, a.StreetAddress, a.City, a.State, a.PostalCode, a.Country
                     FROM business.Companies c
                     INNER JOIN business.Addresses a ON a.CompanyId = c.Id
                     WHERE c.UserId = @UserId AND c.Deleted = 0";
@@ -28,7 +28,7 @@ public class CompaniesQuery(SqlConnection connection, UserId userId) : IQuery<Co
         return companies;
     }
 
-    private record CompanyDto(int CompanyId, string Name, string TIN)
+    private record CompanyDto(Guid CompanyId, string Name, string TIN)
     {
         public CompanyViewModel ToViewModel(AddressDto address) =>
             new(CompanyId, Name, TIN, address.ToViewModel());

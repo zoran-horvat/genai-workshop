@@ -27,11 +27,11 @@ public class CompaniesModel : PageModel
         Companies = (await _companiesQuery.GetAllAsync()).ToList();
     }
 
-    public async Task<IActionResult> OnPostAsync(int? deleteId)
+    public async Task<IActionResult> OnPostAsync(Guid? deleteId)
     {
         if (deleteId.HasValue)
         {
-            await _unitOfWork.Companies.DeleteAsync(new EntityId<Company>(deleteId.Value));
+            await _unitOfWork.Companies.DeleteAsync(new ExternalId<Company>(deleteId.Value));
             await _unitOfWork.CommitAsync();
         }
         return RedirectToPage();

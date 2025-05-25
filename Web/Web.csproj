@@ -26,6 +26,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations/migration-001.sql" />
     <EmbeddedResource Include="Migrations/migration-002.sql" />
+    <EmbeddedResource Include="Migrations/migration-003.sql" />
+    <EmbeddedResource Include="Migrations/migration-004.sql" />
   </ItemGroup>
 
 </Project>

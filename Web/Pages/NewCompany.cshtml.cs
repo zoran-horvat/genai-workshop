@@ -53,8 +53,8 @@ public class NewCompanyModel : PageModel
         if (!ModelState.IsValid)
             return Page();
 
-        var address = Address.CreateNew(StreetAddress, City, State, PostalCode, Country );
-        var company = Company.CreateNew(CompanyName, TIN, address);
+        var address = AddressFactory.CreateNew(StreetAddress, City, State, PostalCode, Country );
+        var company = CompanyFactory.CreateNew(CompanyName, TIN, address);
 
         await _unitOfWork.Companies.AddAsync(company);
         await _unitOfWork.CommitAsync();

@@ -21,12 +21,12 @@ public class UnitOfWork : IUnitOfWork
         _userId = userId.EnsureNonEmpty();
     }
 
-    public IRepository<TEntity, TId> GetRepository<TEntity, TId>() where TEntity : class
+    public IRepository<TEntity> GetRepository<TEntity>() where TEntity : class
     {
-        if (typeof(TEntity) == typeof(Company) && typeof(TId) == typeof(EntityId<Company>))
+        if (typeof(TEntity) == typeof(Company))
         {
             _companiesRepository ??= new CompaniesRepository(_userId, _connection, _transaction);
-            return (IRepository<TEntity, TId>) (object) _companiesRepository;
+            return (IRepository<TEntity>) (object) _companiesRepository;
         }
         throw new NotSupportedException($"Repository for {typeof(TEntity).Name} is not supported.");
     }

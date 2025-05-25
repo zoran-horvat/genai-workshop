@@ -3,18 +3,16 @@ using Web.Data.Abstractions;
 namespace Web.Models;
 
 public record Address(
-    EntityId<Address> Id, string StreetAddress, string City,
-    string State, string PostalCode, string Country)
+    ExternalId<Address> ExternalId, string StreetAddress,
+    string City, string State, string PostalCode, string Country);
+
+public static class AddressFactory
 {
-    public static Address CreateNew(
-        string streetAddress, string city,
-        string state, string postalCode, string country) =>
-        new Address(EntityId<Address>.Empty, streetAddress, city, state, postalCode, country);
+    public static Address CreateNew(string streetAddress, string city, string state, string postalCode, string country) =>
+        new Address(ExternalId<Address>.CreateNew(), streetAddress, city, state, postalCode, country);
 
     public static Address CreateExisting(
-        EntityId<Address> id, string streetAddress, string city,
+        ExternalId<Address> externalId, string streetAddress, string city,
         string state, string postalCode, string country) =>
-        new Address(id, streetAddress, city, state, postalCode, country);
-
-    public Address SetId(EntityId<Address> id) => this with { Id = id };
+        new Address(externalId, streetAddress, city, state, postalCode, country);
 }
