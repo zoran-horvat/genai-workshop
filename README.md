@@ -1,4 +1,4 @@
-# Developing the Web Application
+# Workshop: Gen AI Tool Developing a Web Application
 
 ## Purpose of the Application
 
