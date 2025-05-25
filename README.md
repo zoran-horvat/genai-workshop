@@ -1,6 +1,6 @@
-# Money Flow Application
+# Developing the Web Application
 
-## Purpose
+## Purpose of the Application
 
 **TBD** is a web application designed to help businesses manage their customer relationships and financial transactions efficiently.
 
