@@ -397,7 +397,6 @@ git checkout lesson-09-start
 
 *The request* is to augment the `Address` and the `Company` types:
 - An `Address` may have one or several of these meanings: Headquarters, Billing address, Branch address, Legal address, or Other.
-- A `Company` may have multiple addresses, each with its one or more meanings.
 - A `Company` can either be owned by the logged-in user, or a partner company.
 
 *A specific* request for the `Address` type is to implement polymorphism via an `enum` (with the `Flags` attribute), which would define the meaning of an address.
@@ -406,5 +405,24 @@ git checkout lesson-09-start
 
 *To verify* that the task is complete, ensure these behaviors:
 - It is possible to add/edit/delete owned companies separate from partner companies;
-- It is possible to add/edit/delete multiple addresses for each company
 - Each company address can have multiple meanings
+
+## Lesson 10: Implementing a Complex Model
+
+This lesson is implemented on the branch `lesson-10-upgrading-model`
+
+*To begin* solving the lesson, switch to the tag `lesson-10-start`.
+
+```
+git checkout lesson-10-start
+```
+
+*Be aware* that this action will leave your repo in a detached HEAD state.
+
+*This lesson* is teaching how to increase the complexity of the domain model by applying the principles of incremental coding.
+
+*The request* is to augment the `Company` type to allow multiple `Address` instances per `Company`.
+
+*A specific* request is to support CRUD operations on the `Company` model (both owned and partner companies) to add, edit, delete, and list multiple independent addresses for each company.
+
+*To verify* that the task is complete, ensure that it is possible to add/edit/delete additional addresses for each company
