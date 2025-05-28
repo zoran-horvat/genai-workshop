@@ -19,20 +19,33 @@ public class CompaniesQuery(SqlConnection connection, UserId userId) : IQuery<Co
                     INNER JOIN business.Addresses a ON a.CompanyId = c.Id
                     WHERE c.UserId = @UserId AND c.Deleted = 0";
 
-        var companies = await _connection.QueryAsync<CompanyDto, AddressDto, CompanyViewModel>(
+        var companyDict = new Dictionary<Guid, CompanyDto>();
+
+        await _connection.QueryAsync<CompanyDto, AddressDto, CompanyDto>(
             sql,
-            (company, address) => company.ToViewModel(address),
+            (company, address) =>
+            {
+                if (!companyDict.TryGetValue(company.CompanyId, out var companyEntry))
+                {
+                    companyEntry = company with { Addresses = new List<AddressDto>() };
+                    companyDict.Add(company.CompanyId, companyEntry);
+                }
+                companyEntry.Addresses.Add(address);
+                return companyEntry;
+            },
             param: new { UserId = _userId.Value },
             splitOn: "AddressId"
         );
 
-        return companies;
+        return companyDict.Values.Select(c => c.ToViewModel());
     }
 
     private record CompanyDto(Guid CompanyId, string Name, string TIN, string CompanyType)
     {
-        public CompanyViewModel ToViewModel(AddressDto address) =>
-            new(CompanyId, ToCompanyKind(CompanyType), Name, TIN, address.ToViewModel());
+        public List<AddressDto> Addresses { get; init; } = new();
+
+        public CompanyViewModel ToViewModel() =>
+            new(CompanyId, ToCompanyKind(CompanyType), Name, TIN, Addresses.Select(a => a.ToViewModel()).ToArray());
 
         private static CompanyViewModel.CompanyKind ToCompanyKind(string companyType) => companyType switch
         {

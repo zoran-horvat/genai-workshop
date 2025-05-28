@@ -6,7 +6,7 @@
 
 <h2>New Company</h2>
 
-<form method="post">
+<form method="post" style="padding-bottom: 4rem;">
     <div class="mb-3">
         <label asp-for="CompanyName" class="form-label"></label>
         <input asp-for="CompanyName" class="form-control" />
@@ -59,6 +59,7 @@
         </div>
     </fieldset>
     <button type="submit" class="btn btn-primary">Create Company</button>
+    <a asp-page="/Companies" class="btn btn-secondary ms-2">Cancel</a>
 </form>
 
 @section Scripts {

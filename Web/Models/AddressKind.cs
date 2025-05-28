@@ -10,3 +10,11 @@ public enum AddressKind
     Other = 1 << 4,
     Default = Headquarter | Billing | Legal
 }
+
+public static class AddressKindExtensions
+{
+    public static IEnumerable<AddressKind> ToFlags(this AddressKind kind) =>
+        Enum.GetValues(typeof(AddressKind))
+            .Cast<AddressKind>()
+            .Where(k => k != AddressKind.Default && k != 0 && kind.HasFlag(k));
+}

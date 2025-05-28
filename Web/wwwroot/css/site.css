@@ -18,7 +18,7 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+  margin-bottom: 120px; /* increase to ensure buttons are visible above footer */
   background-color: #121212;
   color: #f8f9fa;
 }
@@ -38,5 +38,108 @@ a, .nav-link {
 
 a:hover, .nav-link:hover {
   color: #ffffff;
+}
+
+/* Make all input fields dark blue with white text for better contrast */
+.form-control, .form-control:disabled, .form-control[readonly], input[type="text"], input[type="password"], input[type="email"], input[type="number"], textarea {
+  background-color: #22304a !important; /* lighter, non-gray blue */
+  color: #fff !important;
+  border: 1px solid #44618a;
+}
+
+/* Ensure non-editable fields (disabled/readonly) in tables and forms match the dark blue color scheme */
+.form-control:disabled, .form-control[readonly],
+input:disabled, input[readonly],
+textarea:disabled, textarea[readonly],
+table.table input:disabled, table.table input[readonly],
+table.table textarea:disabled, table.table textarea[readonly] {
+  background-color: #22304a !important;
+  color: #fff !important;
+  border: 1px solid #44618a !important;
+  opacity: 1;
+}
+
+/* Force .form-control-plaintext to look like .form-control for dark mode */
+.form-control-plaintext {
+  background-color: #22304a !important;
+  color: #fff !important;
+  border: 1px solid #44618a !important;
+  opacity: 1 !important;
+  padding: 0.375rem 0.75rem !important;
+  border-radius: 0.375rem !important;
+  min-height: 38px;
+  display: block;
+  width: 100%;
+}
+
+/* Style checkboxes and radios for dark mode */
+.form-check-input {
+  background-color: #22304a;
+  border: 1px solid #44618a;
+}
+
+.form-check-input:checked {
+  background-color: #258cfb;
+  border-color: #258cfb;
+}
+
+/* Placeholder text color for dark backgrounds */
+.form-control::placeholder {
+  color: #b8c7e0;
+  opacity: 1;
+}
+
+/* Table styling for dark blue color scheme */
+table.table {
+  background-color: #22304a;
+  color: #fff;
+  border-color: #44618a;
+}
+
+table.table th, table.table td {
+  background-color: #22304a;
+  color: #fff;
+  border-color: #44618a;
+}
+
+table.table thead th {
+  background-color: #294066;
+  color: #fff;
+  border-color: #44618a;
+}
+
+table.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: #253a5a;
+}
+
+table.table-striped > tbody > tr:nth-of-type(even) {
+  background-color: #22304a;
+}
+
+/* Align form action buttons (submit and <a>) at the bottom of forms */
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.form-actions .btn, .form-actions .btn-link, .form-actions a.btn {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0;
+}
+
+/* Non-editable field styling to match dark theme */
+.non-editable-field {
+  background-color: #22304a !important;
+  color: #fff !important;
+  border: 1px solid #44618a !important;
+  padding: 0.375rem 0.75rem !important;
+  border-radius: 0.375rem !important;
+  min-height: 38px;
+  display: block;
+  width: 100%;
 }
 

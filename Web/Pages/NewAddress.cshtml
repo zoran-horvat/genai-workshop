@@ -1,0 +1,98 @@
+@page "{id:guid}"
+@model Web.Pages.NewAddressModel
+@{
+    ViewData["Title"] = "Add Address";
+}
+
+<h2>Add Address</h2>
+
+@if (Model.ErrorMessage != null)
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+<div class="mb-3">
+    <label class="form-label">Company Name</label>
+    <div class="bg-dark text-light rounded px-2 py-1 non-editable-field">@Model.Company.Name</div>
+</div>
+<div class="mb-3">
+    <label class="form-label">TIN</label>
+    <div class="bg-dark text-light rounded px-2 py-1 non-editable-field">@Model.Company.TIN</div>
+</div>
+
+<h4>Addresses</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Address Kind</th>
+            <th>Street Address</th>
+            <th>Postal Code</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Country</th>
+        </tr>
+    </thead>
+    <tbody>
+    @{
+        var i = 1;
+    }
+    @foreach (var address in Model.CompanyAddresses)
+    {
+        <tr>
+            <td>@i</td>
+            <td>@address.AddressKind</td>
+            <td>@address.StreetAddress</td>
+            <td>@address.PostalCode</td>
+            <td>@address.City</td>
+            <td>@address.State</td>
+            <td>@address.Country</td>
+        </tr>
+        i++;
+    }
+    </tbody>
+</table>
+
+<form method="post">
+    <h4>New Address</h4>
+    <div class="mb-3">
+        <label asp-for="NewAddress.StreetAddress" class="form-label"></label>
+        <input asp-for="NewAddress.StreetAddress" class="form-control" />
+        <span asp-validation-for="NewAddress.StreetAddress" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="NewAddress.City" class="form-label"></label>
+        <input asp-for="NewAddress.City" class="form-control" />
+        <span asp-validation-for="NewAddress.City" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="NewAddress.State" class="form-label"></label>
+        <input asp-for="NewAddress.State" class="form-control" />
+        <span asp-validation-for="NewAddress.State" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="NewAddress.PostalCode" class="form-label"></label>
+        <input asp-for="NewAddress.PostalCode" class="form-control" />
+        <span asp-validation-for="NewAddress.PostalCode" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="NewAddress.Country" class="form-label"></label>
+        <input asp-for="NewAddress.Country" class="form-control" />
+        <span asp-validation-for="NewAddress.Country" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="NewAddress.AddressKind" class="form-label"></label>
+        <div>
+            @foreach (var kind in Model.AddressKindList)
+            {
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="SelectedAddressKinds" value="@kind.Value" id="kind_@kind.Value" />
+                    <label class="form-check-label" for="kind_@kind.Value">@kind.Text</label>
+                </div>
+            }
+        </div>
+        <span asp-validation-for="NewAddress.SelectedAddressKinds" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Address</button>
+    <a asp-page="/EditCompany" asp-route-id="@Model.Company.ExternalId.Value" class="btn btn-secondary">Cancel</a>
+</form>

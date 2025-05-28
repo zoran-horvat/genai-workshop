@@ -36,11 +36,12 @@ else
             <tbody>
             @foreach (var company in ownCompanies)
             {
+                var firstAddress = company.Addresses.FirstOrDefault();
                 <tr>
                     <td>@company.Name</td>
                     <td>@company.TIN</td>
-                    <td>@($"{company.Address.StreetAddress}, {company.Address.City}, {company.Address.State}, {company.Address.PostalCode}, {company.Address.Country}")</td>
-                    <td>@company.Address.AddressKind.ToString()</td>
+                    <td>@(firstAddress != null ? $"{firstAddress.StreetAddress}, {firstAddress.City}, {firstAddress.State}, {firstAddress.PostalCode}, {firstAddress.Country}" : "-")</td>
+                    <td>@(firstAddress != null ? firstAddress.AddressKind.ToString() : "-")</td>
                     <td>
                         <a class="btn btn-primary btn-sm" asp-page="/EditCompany" asp-route-id="@company.Id">Edit</a>
                         <button type="submit" class="btn btn-danger btn-sm ms-2" name="deleteId" value="@company.Id" onclick="return confirm('Are you sure you want to delete this company?');">Delete</button>
@@ -79,11 +80,12 @@ else
         <tbody>
         @foreach (var company in partnerCompanies)
         {
+            var firstAddress = company.Addresses?.FirstOrDefault();
             <tr>
                 <td>@company.Name</td>
                 <td>@company.TIN</td>
-                <td>@($"{company.Address.StreetAddress}, {company.Address.City}, {company.Address.State}, {company.Address.PostalCode}, {company.Address.Country}")</td>
-                <td>@company.Address.AddressKind.ToString()</td>
+                <td>@(firstAddress != null ? $"{firstAddress.StreetAddress}, {firstAddress.City}, {firstAddress.State}, {firstAddress.PostalCode}, {firstAddress.Country}" : "-")</td>
+                <td>@(firstAddress != null ? firstAddress.AddressKind.ToString() : "-")</td>
                 <td>
                     <a class="btn btn-primary btn-sm" asp-page="/EditCompany" asp-route-id="@company.Id">Edit</a>
                     <button type="submit" class="btn btn-danger btn-sm ms-2" name="deleteId" value="@company.Id" onclick="return confirm('Are you sure you want to delete this company?');">Delete</button>

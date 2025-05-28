@@ -22,13 +22,7 @@ public class EditCompanyModel : PageModel
     [TempData]
     public string? ErrorMessage { get; set; }
 
-    [BindProperty]
-    public List<AddressKind> SelectedAddressKinds { get; set; } = new();
-
-    public List<AddressKind> AllAddressKinds { get; } = Enum.GetValues(typeof(AddressKind))
-        .Cast<AddressKind>()
-        .Where(k => k != AddressKind.Default && k != 0)
-        .ToList();
+    public List<Address> CompanyAddresses { get; set; } = new();
 
     public async Task<IActionResult> OnGetAsync(Guid id)
     {
@@ -40,11 +34,7 @@ public class EditCompanyModel : PageModel
         }
 
         Company = EditCompanyInputModel.FromCompany(company);
-        // Set selected kinds from the AddressKind flags
-        SelectedAddressKinds = Enum.GetValues(typeof(AddressKind))
-            .Cast<AddressKind>()
-            .Where(k => k != AddressKind.Default && k != 0 && company.Address.AddressKind.HasFlag(k))
-            .ToList();
+        CompanyAddresses = company.Addresses?.ToList() ?? new List<Address>();
         return Page();
     }
 
@@ -60,27 +50,31 @@ public class EditCompanyModel : PageModel
             return RedirectToPage("/Companies");
         }
 
-        // Combine selected kinds into a single AddressKind value
-        var addressKind = SelectedAddressKinds.Any()
-            ? SelectedAddressKinds.Aggregate((a, b) => a | b)
-            : AddressKind.Default;
+        // Check if a deleteAddressId was posted
+        var deleteAddressIdStr = Request.Form["deleteAddressId"].FirstOrDefault();
+        if (!string.IsNullOrEmpty(deleteAddressIdStr) && Guid.TryParse(deleteAddressIdStr, out var deleteAddressId))
+        {
+            // Remove the address from the company
+            var updatedAddresses = company.Addresses.Where(a => a.ExternalId.Value != deleteAddressId).ToArray();
+            var updated = company with
+            {
+                Name = Company.Name,
+                TIN = Company.TIN,
+                Addresses = updatedAddresses
+            };
+            await _unitOfWork.Companies.UpdateAsync(updated);
+            await _unitOfWork.CommitAsync();
+            // Stay on the same page after delete
+            return RedirectToPage(new { id = Company.Id });
+        }
 
-        var updated = company with
+        var updatedCompany = company with
         {
             Name = Company.Name,
-            TIN = Company.TIN,
-            Address = company.Address with
-            {
-                StreetAddress = Company.Address.StreetAddress,
-                City = Company.Address.City,
-                State = Company.Address.State,
-                PostalCode = Company.Address.PostalCode,
-                Country = Company.Address.Country,
-                AddressKind = addressKind
-            }
+            TIN = Company.TIN
         };
 
-        await _unitOfWork.Companies.UpdateAsync(updated);
+        await _unitOfWork.Companies.UpdateAsync(updatedCompany);
         await _unitOfWork.CommitAsync();
 
         return RedirectToPage("/Companies");
@@ -91,32 +85,12 @@ public class EditCompanyModel : PageModel
         public Guid Id { get; set; }
         public string Name { get; set; } = "";
         public string TIN { get; set; } = "";
-        public EditAddressInputModel Address { get; set; } = new();
 
         public static EditCompanyInputModel FromCompany(Company company) => new()
         {
             Id = company.ExternalId.Value,
             Name = company.Name,
-            TIN = company.TIN,
-            Address = new EditAddressInputModel
-            {
-                Id = company.Address.ExternalId.Value,
-                StreetAddress = company.Address.StreetAddress,
-                City = company.Address.City,
-                State = company.Address.State,
-                PostalCode = company.Address.PostalCode,
-                Country = company.Address.Country
-            }
+            TIN = company.TIN
         };
-    }
-
-    public class EditAddressInputModel
-    {
-        public Guid Id { get; set; }
-        public string StreetAddress { get; set; } = "";
-        public string City { get; set; } = "";
-        public string State { get; set; } = "";
-        public string PostalCode { get; set; } = "";
-        public string Country { get; set; } = "";
     }
 }

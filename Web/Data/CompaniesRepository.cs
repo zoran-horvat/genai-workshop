@@ -20,23 +20,25 @@ public class CompaniesRepository : IRepository<Company>
                              FROM business.Companies c
                              INNER JOIN business.Addresses a ON a.CompanyId = c.Id
                              WHERE c.ExternalId = @ExternalId AND c.UserId = @UserId AND c.Deleted = 0";
-        var result = await _connection.QueryAsync<CompanyDto, AddressDto, Company>(
+        Company? company = null;
+        await _connection.QueryAsync<CompanyDto, AddressDto, Company>(
             sql,
-            (companyDto, addressDto) => companyDto.ToModel(addressDto),
+            (companyDto, addressDto) => company =
+                company is null ? companyDto.ToModel(addressDto) : company.Add(addressDto.ToModel()),
             new { ExternalId = externalId.Value, UserId = _userId.Value },
             transaction: _transaction,
             splitOn: "Id"
         );
-        return result.FirstOrDefault();
+        return company;
     }
 
     private record CompanyDto(int Id, Guid ExternalId, string Name, string TIN, bool Deleted, string CompanyType)
     {
-        public Company ToModel(AddressDto address) =>
+        public Company ToModel(AddressDto firstAddress) =>
             CompanyType switch
             {
-                "PartnerCompany" => new PartnerCompany(new(ExternalId), Name, TIN, address.ToModel()),
-                _ => new OwnedCompany(new(ExternalId), Name, TIN, address.ToModel())
+                "PartnerCompany" => CompanyFactory.CreateExistingPartner(new(ExternalId), Name, TIN, firstAddress.ToModel()),
+                _ => CompanyFactory.CreateExistingOwned(new(ExternalId), Name, TIN, firstAddress.ToModel())
             };
     }
 
@@ -44,6 +46,9 @@ public class CompaniesRepository : IRepository<Company>
     {
         public Address ToModel() =>
             new Address(new(ExternalId), StreetAddress, City, State, PostalCode, Country, (AddressKind)AddressKind);
+
+        public static Address[] ToModel(IEnumerable<AddressDto> addressDtos) =>
+            addressDtos.Select(dto => dto.ToModel()).ToArray();
     }
 
     public async Task<Company> AddAsync(Company entity, CancellationToken cancellationToken = default)
@@ -57,12 +62,20 @@ public class CompaniesRepository : IRepository<Company>
             transaction: _transaction
         );
 
-        var _ = await AddAddress(entity, companyId);
+        await AddAddresses(entity.Addresses, companyId);
 
         return entity;
     }
 
-    private async Task<int> AddAddress(Company entity, int companyId)
+    private async Task AddAddresses(IEnumerable<Address> addresses, int companyId)
+    {
+        foreach (var address in addresses)
+        {
+            await AddAddress(address, companyId);
+        }
+    }
+
+    private async Task<int> AddAddress(Address address, int companyId)
     {
         const string insertAddress = @"INSERT INTO business.Addresses (CompanyId, StreetAddress, City, State, PostalCode, Country, ExternalId, AddressKind)
                                        OUTPUT INSERTED.Id
@@ -72,13 +85,13 @@ public class CompaniesRepository : IRepository<Company>
             new
             {
                 CompanyId = companyId,
-                entity.Address.StreetAddress,
-                entity.Address.City,
-                entity.Address.State,
-                entity.Address.PostalCode,
-                entity.Address.Country,
-                ExternalId = entity.Address.ExternalId.Value,
-                AddressKind = (int)entity.Address.AddressKind
+                address.StreetAddress,
+                address.City,
+                address.State,
+                address.PostalCode,
+                address.Country,
+                ExternalId = address.ExternalId.Value,
+                AddressKind = (int)address.AddressKind
             },
             transaction: _transaction
         );
@@ -87,6 +100,9 @@ public class CompaniesRepository : IRepository<Company>
 
     public async Task UpdateAsync(Company entity, CancellationToken cancellationToken = default)
     {
+        var companyId = await TryFindCompanyId(entity);
+        if (companyId is null) return;
+
         // Update Company
         const string updateCompany = @"UPDATE business.Companies
                                        SET Name = @Name, TIN = @TIN, ExternalId = @ExternalId
@@ -97,29 +113,59 @@ public class CompaniesRepository : IRepository<Company>
             transaction: _transaction
         );
 
-        if (companyRows > 0) await UpdateAddress(entity);
+        if (companyRows > 0) await UpdateAddresses(entity, companyId.Value);
     }
 
-    private async Task UpdateAddress(Company entity)
+    private async Task<int?> TryFindCompanyId(Company entity)
+    {
+        const string companyIdQuery = @"SELECT Id FROM business.Companies
+                                        WHERE ExternalId = @ExternalId AND UserId = @UserId AND Deleted = 0 AND CompanyType = @CompanyType;";
+        return await _connection.QuerySingleOrDefaultAsync<int?>(
+            companyIdQuery,
+            new { ExternalId = entity.ExternalId.Value, UserId = _userId.Value, CompanyType = entity.GetType().Name },
+            transaction: _transaction
+        );
+    }
+
+    private async Task UpdateAddresses(Company entity, int companyId)
+    {
+        const string deleteAddresses =
+            @"DELETE FROM business.Addresses WHERE CompanyId = @CompanyId AND ExternalId NOT IN @Ids";
+        await _connection.ExecuteAsync(deleteAddresses,
+            new { CompanyId = companyId, Ids = entity.Addresses.Select(a => a.ExternalId.Value).ToList() },
+            transaction: _transaction);
+
+        foreach (var address in entity.Addresses)
+        {
+            await UpsertAddress(address, companyId);
+        }
+    }
+
+    private async Task UpsertAddress(Address address, int companyId)
     {
         const string updateAddress = @"UPDATE business.Addresses
                                        SET StreetAddress = @StreetAddress, City = @City,
                                            State = @State, PostalCode = @PostalCode, Country = @Country, ExternalId = @ExternalId, AddressKind = @AddressKind
                                        WHERE ExternalId = @ExternalId";
-        await _connection.ExecuteAsync(
+        var updated = await _connection.ExecuteAsync(
             updateAddress,
             new
             {
-                entity.Address.StreetAddress,
-                entity.Address.City,
-                entity.Address.State,
-                entity.Address.PostalCode,
-                entity.Address.Country,
-                ExternalId = entity.Address.ExternalId.Value,
-                AddressKind = (int)entity.Address.AddressKind
+                address.StreetAddress,
+                address.City,
+                address.State,
+                address.PostalCode,
+                address.Country,
+                ExternalId = address.ExternalId.Value,
+                AddressKind = (int)address.AddressKind
             },
             transaction: _transaction
         );
+
+        if (updated == 0)
+        {
+            await AddAddress(address, companyId);
+        }
     }
 
     public async Task DeleteAsync(ExternalId<Company> externalId, CancellationToken cancellationToken = default)
