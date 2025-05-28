@@ -39,6 +39,15 @@ public class NewCompanyModel : PageModel
     [Required]
     public string Country { get; set; } = string.Empty;
 
+    [BindProperty]
+    [Required]
+    public List<AddressKind> SelectedAddressKinds { get; set; } = new();
+
+    public List<AddressKind> AllAddressKinds { get; } = Enum.GetValues(typeof(AddressKind))
+        .Cast<AddressKind>()
+        .Where(k => k != AddressKind.Default && k != 0)
+        .ToList();
+
     private readonly IUnitOfWork _unitOfWork;
 
     public NewCompanyModel(IUnitOfWork unitOfWork)
@@ -46,15 +55,29 @@ public class NewCompanyModel : PageModel
         _unitOfWork = unitOfWork;
     }
 
-    public void OnGet() { }
+    [BindProperty(SupportsGet = true)]
+    public string? kind { get; set; }
+
+    public void OnGet()
+    {
+        // Optionally preselect defaults
+        SelectedAddressKinds = new List<AddressKind> { AddressKind.Headquarter };
+    }
 
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
             return Page();
 
-        var address = AddressFactory.CreateNew(StreetAddress, City, State, PostalCode, Country );
-        var company = CompanyFactory.CreateNew(CompanyName, TIN, address);
+        // Combine selected kinds into a single AddressKind value
+        var addressKind = SelectedAddressKinds.Any()
+            ? SelectedAddressKinds.Aggregate((a, b) => a | b)
+            : AddressKind.Default;
+
+        var address = AddressFactory.CreateNew(StreetAddress, City, State, PostalCode, Country, addressKind);
+        var company = (kind?.Equals("Partner", StringComparison.OrdinalIgnoreCase) == true)
+            ? CompanyFactory.CreateNewPartner(CompanyName, TIN, address)
+            : CompanyFactory.CreateNewOwned(CompanyName, TIN, address);
 
         await _unitOfWork.Companies.AddAsync(company);
         await _unitOfWork.CommitAsync();

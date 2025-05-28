@@ -22,6 +22,14 @@ public class EditCompanyModel : PageModel
     [TempData]
     public string? ErrorMessage { get; set; }
 
+    [BindProperty]
+    public List<AddressKind> SelectedAddressKinds { get; set; } = new();
+
+    public List<AddressKind> AllAddressKinds { get; } = Enum.GetValues(typeof(AddressKind))
+        .Cast<AddressKind>()
+        .Where(k => k != AddressKind.Default && k != 0)
+        .ToList();
+
     public async Task<IActionResult> OnGetAsync(Guid id)
     {
         var company = await _unitOfWork.Companies.TryFindAsync(new ExternalId<Company>(id));
@@ -32,6 +40,11 @@ public class EditCompanyModel : PageModel
         }
 
         Company = EditCompanyInputModel.FromCompany(company);
+        // Set selected kinds from the AddressKind flags
+        SelectedAddressKinds = Enum.GetValues(typeof(AddressKind))
+            .Cast<AddressKind>()
+            .Where(k => k != AddressKind.Default && k != 0 && company.Address.AddressKind.HasFlag(k))
+            .ToList();
         return Page();
     }
 
@@ -47,6 +60,11 @@ public class EditCompanyModel : PageModel
             return RedirectToPage("/Companies");
         }
 
+        // Combine selected kinds into a single AddressKind value
+        var addressKind = SelectedAddressKinds.Any()
+            ? SelectedAddressKinds.Aggregate((a, b) => a | b)
+            : AddressKind.Default;
+
         var updated = company with
         {
             Name = Company.Name,
@@ -57,7 +75,8 @@ public class EditCompanyModel : PageModel
                 City = Company.Address.City,
                 State = Company.Address.State,
                 PostalCode = Company.Address.PostalCode,
-                Country = Company.Address.Country
+                Country = Company.Address.Country,
+                AddressKind = addressKind
             }
         };
 

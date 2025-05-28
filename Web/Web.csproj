@@ -28,6 +28,8 @@
     <EmbeddedResource Include="Migrations/migration-002.sql" />
     <EmbeddedResource Include="Migrations/migration-003.sql" />
     <EmbeddedResource Include="Migrations/migration-004.sql" />
+    <EmbeddedResource Include="Migrations/migration-005.sql" />
+    <EmbeddedResource Include="Migrations/migration-006.sql" />
   </ItemGroup>
 
 </Project>

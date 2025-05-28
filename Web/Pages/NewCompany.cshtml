@@ -1,4 +1,4 @@
-@page
+@page "{kind?}"
 @model Web.Pages.NewCompanyModel
 @{
     ViewData["Title"] = "New Company";
@@ -43,6 +43,19 @@
             <label asp-for="Country" class="form-label"></label>
             <input asp-for="Country" class="form-control" />
             <span asp-validation-for="Country" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Address Kinds</label>
+            <div>
+                @foreach (var kind in Model.AllAddressKinds)
+                {
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" name="SelectedAddressKinds" value="@kind" id="kind_@kind" @(Model.SelectedAddressKinds.Contains(kind) ? "checked" : "") />
+                        <label class="form-check-label" for="kind_@kind">@kind.ToString()</label>
+                    </div>
+                }
+            </div>
+            <span asp-validation-for="SelectedAddressKinds" class="text-danger"></span>
         </div>
     </fieldset>
     <button type="submit" class="btn btn-primary">Create Company</button>
