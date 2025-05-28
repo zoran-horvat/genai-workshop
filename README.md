@@ -373,10 +373,38 @@ git checkout lesson-08-start
 
 *Be aware* that this action will leave your repo in a detached HEAD state.
 
-*This lesson* is teaching how to augment the AI tool to develop the database schema and the domain models in lockstep.
+*This lesson* is teaching how to utilize the AI tool to develop the database schema and the domain models in lockstep.
 
 *The request* is to separate the autoincrement IDs used by the database from external systems and Web pages. All externally visible objects should carry a GUID identifier, while the database-related code (UoW, repositories) should operate on autoincrement IDs for the database operations.
 
 *A specific* request is to use GUID external IDs in the `Company` and `Address` domain models.
 
 *To verify* that the task is complete, ensure that no autoincrement ID is visible in any of the Web pages operating on companies.
+
+## Lesson 09: Implementing Polymorphic Models
+
+This lesson is implemented on the branch `lesson-09-polymorphic-models`.
+
+*To begin* solving the lesson, switch to the tag `lesson-09-start`.
+
+```
+git checkout lesson-09-start
+```
+
+*Be aware* that this action will leave your repo in a detached HEAD state.
+
+*This lesson* is teaching how to implement polymorphic domain and database models with the help of AI.
+
+*The request* is to augment the `Address` and the `Company` types:
+- An `Address` may have one or several of these meanings: Headquarters, Billing address, Branch address, Legal address, or Other.
+- A `Company` may have multiple addresses, each with its one or more meanings.
+- A `Company` can either be owned by the logged-in user, or a partner company.
+
+*A specific* request for the `Address` type is to implement polymorphism via an `enum` (with the `Flags` attribute), which would define the meaning of an address.
+
+*A specific* request for the `Company` type is to define two subtypes: `OwnedCompany` and `PartnerCompany`, each modeling a specific business entity.
+
+*To verify* that the task is complete, ensure these behaviors:
+- It is possible to add/edit/delete owned companies separate from partner companies;
+- It is possible to add/edit/delete multiple addresses for each company
+- Each company address can have multiple meanings
