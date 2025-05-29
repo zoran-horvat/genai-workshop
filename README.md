@@ -426,3 +426,33 @@ git checkout lesson-10-start
 *A specific* request is to support CRUD operations on the `Company` model (both owned and partner companies) to add, edit, delete, and list multiple independent addresses for each company.
 
 *To verify* that the task is complete, ensure that it is possible to add/edit/delete additional addresses for each company
+
+## Lesson 11: Seeding the Database
+
+This lesson is implemented on the branch `lesson-11-data-seeding`
+
+*To begin* solving the lesson, switch to the tag `lesson-11-start`.
+
+```
+git checkout lesson-11-start
+```
+
+*Be aware* that this action will leave your repo in a detached HEAD state.
+
+*This lesson* is teaching how to generate development and test data repeatably.
+
+*The request* is to augment the `Cli` tool to generate a large number of fake but meaningful `Company` and `Address` instances in the database, for the purpose of development and testing.
+
+*A specific* request is to develop types in the `Cli` project that will generate random, but meaningful, instances of:
+- `Address` objects, including street names, city and country names.
+- Owned `Company` instances with at least one address
+- Partner `Company` instances with at least one billing address, to develop billing features
+- There should be at least one user with hundreds of partner companies, to test corner cases
+
+*To complete* the implementation, augment the `resetdb` command in the `Cli` project to initialize the data after creating the demo users.
+
+*To verify* that the task is complete, repeat these steps:
+- Recreate the database by applying the `Cli` `resetdb` command
+- Verify that each user has the associated companies
+- Verify that one of the users has hundreds of partner companies
+- Verify that recreating the database again yields the exact same company data
