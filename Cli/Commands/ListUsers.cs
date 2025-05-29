@@ -43,6 +43,7 @@ public class ListUsers : Command<ListUsers.Settings>
         }
 
         AnsiConsole.Write(table);
+
         return 0;
     }
 }

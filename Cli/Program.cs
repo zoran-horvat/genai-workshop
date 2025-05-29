@@ -25,6 +25,25 @@ services.AddTransient<ResetDatabase>();
 // Register ListUsers command
 services.AddTransient<ListUsers>();
 
+// Register Data services
+services.AddSingleton<Cli.Data.StreetAddressGenerator>();
+services.AddSingleton<Cli.Data.CompanyNameGenerator>();
+services.AddSingleton<Cli.Data.AddressGenerator>();
+services.AddSingleton<Cli.Data.CompanyGenerator>();
+services.AddTransient<Cli.Data.Companies>(provider =>
+    new Cli.Data.Companies(
+        provider.GetRequiredService<Cli.Data.CompanyGenerator>(),
+        user =>
+        {
+            var configuration = provider.GetRequiredService<IConfiguration>();
+            var connectionString = configuration.GetConnectionString("DefaultConnection")!;
+            return new Web.Data.UnitOfWork(connectionString, new Web.Data.Abstractions.UserId(user.Id));
+        }
+    ));
+
+// Register IConfiguration as a singleton service
+services.AddSingleton<IConfiguration>(configuration);
+
 // Build the service provider
 var serviceProvider = services.BuildServiceProvider();
 

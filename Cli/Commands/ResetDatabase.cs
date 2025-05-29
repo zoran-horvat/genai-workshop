@@ -4,58 +4,116 @@ using Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Web.Data;
+using Cli.Data;
+using Spectre.Console;
 
 namespace Commands;
 
-public class ResetDatabase : Command<ResetDatabase.Settings>
+public class ResetDatabase(ApplicationDbContext dbContext, MigrationManager migrationManager, Companies companies) : AsyncCommand<ResetDatabase.Settings>
 {
-    private readonly ApplicationDbContext _dbContext;
-    private readonly MigrationManager _migrationManager;
-
-    public ResetDatabase(ApplicationDbContext dbContext, MigrationManager migrationManager)
-    {
-        _dbContext = dbContext;
-        _migrationManager = migrationManager;
-    }
+    private readonly ApplicationDbContext _dbContext = dbContext;
+    private readonly MigrationManager _migrationManager = migrationManager;
+    private readonly Companies _companies = companies;
 
     public sealed class Settings : CommandSettings
     {
     }
 
-    public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
+    public override async Task<int> ExecuteAsync([NotNull] CommandContext context, [NotNull] Settings settings)
     {
         Console.WriteLine("Resetting the database...");
-        DropDatabase();
-        RecreateDatabase();
-        _migrationManager.ApplyMigrations();
-        CreateTestUsersAndRoles();
+        await DropDatabase();
+        await RecreateDatabase();
+        await Task.Run(() => _migrationManager.ApplyMigrations());
+    
+        List<ApplicationUser> users = new();
+        await foreach (var user in CreateTestUsersAndRolesAsync()) users.Add(user);
+
+        await CreateTestCompanies(users);
         return 0;
     }
 
-    private void DropDatabase()
+    private async Task DropDatabase()
     {
-        _dbContext.Database.EnsureDeleted();
+        await _dbContext.Database.EnsureDeletedAsync();
         Console.WriteLine("Database has been dropped successfully.");
     }
 
-    private void RecreateDatabase()
+    private async Task RecreateDatabase()
     {
-        _dbContext.Database.EnsureCreated();
+        await _dbContext.Database.EnsureCreatedAsync();
         Console.WriteLine("Database has been recreated successfully.");
     }
 
-    private void CreateTestUsersAndRoles()
+    private async Task CreateTestCompanies(IEnumerable<ApplicationUser> users)
+    {
+        foreach (var user in users)
+        {
+            await foreach (var (_, company) in _companies.CreateCompanies(user))
+            {
+                AnsiConsole.MarkupLine(
+                    $"Created company: [white][bold]{user.UserName}[/][/] {company.GetType().Name.Replace("Company", "")} " +
+                    $"[white][bold]{company.Name}[/][/] {company.Addresses[0].StreetAddress} " +
+                    $"{company.Addresses[0].City}, {company.Addresses[0].Country}");
+            }
+        }
+    }
+
+    private async IAsyncEnumerable<ApplicationUser> CreateTestUsersAndRolesAsync()
     {
         var userManager = GetUserManager(allowWeakPasswords: true);
         var roleManager = GetRoleManager();
 
-        CreateUserIfNotExists(userManager, roleManager, "owner", "owner@example.com", "owner", "Owner");
-        CreateUserIfNotExists(userManager, roleManager, "user1", "user1@example.com", "user1", "User");
-        CreateUserIfNotExists(userManager, roleManager, "user2", "user2@example.com", "user2", "User");
-        CreateUserIfNotExists(userManager, roleManager, "user3", "user3@example.com", "user3", "User");
+        var users = new List<ApplicationUser>();
+        var userInfos = new[]
+        {
+            ("owner", "owner@example.com", "owner", "Owner"),
+            ("user1", "user1@example.com", "user1", "User"),
+            ("user2", "user2@example.com", "user2", "User"),
+            ("user3", "user3@example.com", "user3", "User")
+        };
 
-        // Revert to default password policy after test users are created
+        foreach (var (username, email, password, role) in userInfos)
+        {
+            if (await CreateUserIfNotExistsAsync(userManager, roleManager, username, email, password, role) is ApplicationUser user)
+            {
+                users.Add(user);
+                yield return user;
+            }
+        }
         userManager = GetUserManager(allowWeakPasswords: false);
+    }
+
+    private async Task<ApplicationUser?> CreateUserIfNotExistsAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, string username, string email, string password, string role)
+    {
+        var user = await userManager.FindByNameAsync(username);
+        if (user == null)
+        {
+            user = new ApplicationUser { UserName = username, Email = email, EmailConfirmed = true };
+            var result = await userManager.CreateAsync(user, password);
+            if (!result.Succeeded)
+            {
+                Console.WriteLine($"Failed to create user {username}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            }
+            Console.WriteLine($"Created user: {username}");
+        }
+        else
+        {
+            Console.WriteLine($"User already exists: {username}");
+        }
+        if (!await userManager.IsInRoleAsync(user, role))
+        {
+            var roleResult = await userManager.AddToRoleAsync(user, role);
+            if (!roleResult.Succeeded)
+            {
+                Console.WriteLine($"Failed to add user {username} to role {role}: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+            }
+            else
+            {
+                Console.WriteLine($"Added user {username} to role {role}");
+            }
+        }
+        return user;
     }
 
     private UserManager<ApplicationUser> GetUserManager(bool allowWeakPasswords = false)
@@ -80,38 +138,6 @@ public class ResetDatabase : Command<ResetDatabase.Settings>
         var store = new RoleStore<IdentityRole>(_dbContext);
         var validators = new List<IRoleValidator<IdentityRole>> { new RoleValidator<IdentityRole>() };
         return new RoleManager<IdentityRole>(store, validators, null!, null!, null!);
-    }
-
-    private void CreateUserIfNotExists(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, string username, string email, string password, string role)
-    {
-        var user = userManager.FindByNameAsync(username).GetAwaiter().GetResult();
-        if (user == null)
-        {
-            user = new ApplicationUser { UserName = username, Email = email, EmailConfirmed = true };
-            var result = userManager.CreateAsync(user, password).GetAwaiter().GetResult();
-            if (!result.Succeeded)
-            {
-                Console.WriteLine($"Failed to create user {username}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
-                return;
-            }
-            Console.WriteLine($"Created user: {username}");
-        }
-        else
-        {
-            Console.WriteLine($"User already exists: {username}");
-        }
-        if (!userManager.IsInRoleAsync(user, role).GetAwaiter().GetResult())
-        {
-            var roleResult = userManager.AddToRoleAsync(user, role).GetAwaiter().GetResult();
-            if (!roleResult.Succeeded)
-            {
-                Console.WriteLine($"Failed to add user {username} to role {role}: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
-            }
-            else
-            {
-                Console.WriteLine($"Added user {username} to role {role}");
-            }
-        }
     }
 }
 
